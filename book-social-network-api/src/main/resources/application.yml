@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 50MB  #Permet de d�finir la taille d'un fichier lors de t�l�chargement
+
+springdoc:
+  default-produces-media-type: application/json
+
+server:
+  servlet:
+    context-path: /api/v1/
