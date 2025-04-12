@@ -1,0 +1,7 @@
+/.idea
+*.iml
+/book-social-network-api/target
+/book-network-api/*.iml
+
+#/book-social-network-front/node_modules
+#/book-social-network-front/dist
