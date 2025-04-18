@@ -13,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -40,7 +42,7 @@ public class AuthenticationService
     public void register(RegistrationRequest request) throws MessagingException
     {
         var userRole = roleRepository.findByName("USER")
-                //todo : Exception à gérer plus tard
+                //TODO : Exception à gérer plus tard
                 .orElseThrow(() -> new IllegalStateException("Le role USER n'est pas initialisé"));
         var user = User.builder()
                 .firstname(request.getFirstname())
@@ -119,5 +121,29 @@ public class AuthenticationService
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+    
+    public void activateAccount(String token) throws MessagingException
+    {
+        Token savedToken = tokenRepository.findByToken(token)
+                //TODO : Exception à gérer plus tard
+                .orElseThrow(() -> new RuntimeException("Code invalide."));
+
+        // Si le code a expiré
+        if (LocalDateTime.now().isAfter(savedToken.getExpiredAt()))
+        {
+            sendValidationEmail(savedToken.getUser());
+            throw new RuntimeException("Code d'activation expiré. Un nouveau code vient d'être envoyé.");
+        }
+
+        // activation
+        var user = userRepository.findByEmail(savedToken.getUser().getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur inconnu."));
+        user.setEnabled(true);
+        userRepository.save(user);
+
+        // Mise à jour de la date de validation du code/token
+        savedToken.setValidatedAt(LocalDateTime.now());
+        tokenRepository.save(savedToken);
     }
 }
