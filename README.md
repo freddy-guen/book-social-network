@@ -48,3 +48,27 @@ Pour tester le service login :
 }
 ```
 On obtient en réponse le token généré.
+
+### 3. Tester la gestion des exception
+
+Démarrer l'application
+Dans Postman, tester la requête Register http://localhost:8088/api/v1/auth/register avec le body suivant :
+```
+{
+    "firstname" : "",
+    "lastname" : "",
+    "email" : "guenengafo@.fr",
+    "password" : "password123"
+}
+```
+
+On obtient la réponse suivante :
+```
+{
+    "validationErrors": [
+        "Le nom est obligatoire",
+        "Format d'email invalide",
+        "Le prénom est obligatoire"
+    ]
+}
+```
