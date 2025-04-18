@@ -1,20 +1,21 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/book_social_network
-    username: username
-    password: password
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
     properties:
-      format_sql: true
+      hibernate:
+        format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   mail:
     host: localhost
-    ports: 1025
+    port: 1025
     username: guen
     password: guen
     properties:
@@ -36,3 +37,6 @@ application:
   mailing:
     frontend:
       activation-url: http://localhost:4200/activate-account
+
+server:
+  port: 8088
