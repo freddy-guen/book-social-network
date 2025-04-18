@@ -1,11 +1,15 @@
 package com.guen.book.auth;
 
+import com.guen.book.email.EmailService;
+import com.guen.book.email.EmailTemplateName;
 import com.guen.book.role.RoleRepository;
 import com.guen.book.user.Token;
 import com.guen.book.user.TokenRepository;
 import com.guen.book.user.User;
 import com.guen.book.user.UserRepository;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +26,12 @@ public class AuthenticationService
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
+    private final EmailService emailService;
 
-    public void register(RegistrationRequest request)
+    @Value("${application.mailing.frontend.activation-url}")
+    private String activationUrl;
+
+    public void register(RegistrationRequest request) throws MessagingException
     {
         var userRole = roleRepository.findByName("USER")
                 //todo : Exception à gérer plus tard
@@ -40,13 +48,22 @@ public class AuthenticationService
         userRepository.save(user);
 
         //Envoi du mail de validation
-        sendValidationemail(user);
+        sendValidationEmail(user);
     }
 
-    private void sendValidationemail(User user)
+    private void sendValidationEmail(User user) throws MessagingException
     {
         var newToken = generateAndSaveActivationToken(user);
+
         // send email
+        emailService.sendEmail(
+                user.getEmail(),
+                user.fullName(),
+                EmailTemplateName.ACTIVATE_ACCOUNT,
+                activationUrl,
+                newToken,
+                "Account activation"
+        );
     }
 
     private String generateAndSaveActivationToken(User user)

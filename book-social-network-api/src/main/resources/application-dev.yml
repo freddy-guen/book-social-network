@@ -28,8 +28,11 @@ spring:
         timeout: 3000
         writetimeout: 5000
 
-applications:
+application:
   security:
     jwt:
       secret-key: 379EC16424B5EF8389C8CEF2218A5
       expiration: 8640000
+  mailing:
+    frontend:
+      activation-url: http://localhost:4200/activate-account
