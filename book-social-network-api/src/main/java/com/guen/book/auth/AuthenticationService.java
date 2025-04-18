@@ -3,6 +3,7 @@ package com.guen.book.auth;
 import com.guen.book.email.EmailService;
 import com.guen.book.email.EmailTemplateName;
 import com.guen.book.role.RoleRepository;
+import com.guen.book.security.JwtService;
 import com.guen.book.user.Token;
 import com.guen.book.user.TokenRepository;
 import com.guen.book.user.User;
@@ -10,11 +11,14 @@ import com.guen.book.user.UserRepository;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -27,6 +31,8 @@ public class AuthenticationService
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
@@ -96,5 +102,22 @@ public class AuthenticationService
         }
 
         return codeBuilder.toString();
+    }
+
+    public AuthenticationResponse authenticate(AuthenticationRequest request)
+    {
+        var auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
+
+        var user = ((User)auth.getPrincipal());
+
+        var claims = new HashMap<String, Object>();
+        claims.put("fullname", user.fullName());
+
+        var jwtToken = jwtService.generateToken(claims, user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
     }
 }
