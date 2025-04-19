@@ -1,7 +1,11 @@
 package com.guen.book.history;
 
+import com.guen.book.book.Book;
 import com.guen.book.common.BaseEntity;
+import com.guen.book.user.User;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,9 +20,13 @@ import lombok.experimental.SuperBuilder;
 @Entity
 public class BookTransactionHistory extends BaseEntity
 {
-    // user relationship
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    // book relationship
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
 
     private boolean returned;
 

@@ -1,7 +1,10 @@
 package com.guen.book.feedback;
 
+import com.guen.book.book.Book;
 import com.guen.book.common.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,4 +22,8 @@ public class Feedback extends BaseEntity
     private Double note; // 1 à 5 (étoiles)
 
     private String comment;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
 }
