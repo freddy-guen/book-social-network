@@ -139,10 +139,27 @@ public class BookService
         User user = ((User) connectedUser.getPrincipal());
         if (!Objects.equals(book.getOwner().getId(), user.getId()))
         {
-            throw new OperationNotPermittedException("Vous ne pouvez pas modifier les informations de ce livre");
+            throw new OperationNotPermittedException("Vous ne pouvez pas modifier le statut (partageable)  de ce livre");
         }
 
         book.setShareable(!book.isShareable());
+        bookRepository.save(book);
+
+        return bookId;
+    }
+
+    public Integer updateArchivedStatus(Integer bookId, Authentication connectedUser)
+    {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Aucun livre trouvé avec cet ID:: " + bookId));
+
+        User user = ((User) connectedUser.getPrincipal());
+        if (!Objects.equals(book.getOwner().getId(), user.getId()))
+        {
+            throw new OperationNotPermittedException("Vous ne pouvez pas modifier le statut (archivé) de ce livre");
+        }
+
+        book.setArchived(!book.isArchived());
         bookRepository.save(book);
 
         return bookId;
