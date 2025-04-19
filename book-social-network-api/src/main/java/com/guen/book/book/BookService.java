@@ -1,6 +1,7 @@
 package com.guen.book.book;
 
 import com.guen.book.user.User;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -20,5 +21,12 @@ public class BookService
         book.setOwner(user);
 
         return bookRepository.save(book).getId();
+    }
+
+    public BookResponse findById(Integer bookId)
+    {
+        return bookRepository.findById(bookId)
+                .map(bookMapper::toBookResponse)
+                .orElseThrow(() -> new EntityNotFoundException("Aucun livre trouvé avec l'ID:: " + bookId));
     }
 }
