@@ -1,6 +1,7 @@
 package com.guen.book.book;
 
 import com.guen.book.common.PageResponse;
+import com.guen.book.exception.OperationNotPermittedException;
 import com.guen.book.history.BookTransactionHistory;
 import com.guen.book.history.BookTransactionHistoryRepository;
 import com.guen.book.user.User;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -127,5 +129,22 @@ public class BookService
                 allBorrowedBooks.isFirst(),
                 allBorrowedBooks.isLast()
         );
+    }
+
+    public Integer updateShareableStatus(Integer bookId, Authentication connectedUser)
+    {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Aucun livre trouvé avec cet ID:: " + bookId));
+
+        User user = ((User) connectedUser.getPrincipal());
+        if (!Objects.equals(book.getOwner().getId(), user.getId()))
+        {
+            throw new OperationNotPermittedException("Vous ne pouvez pas modifier les informations de ce livre");
+        }
+
+        book.setShareable(!book.isShareable());
+        bookRepository.save(book);
+
+        return bookId;
     }
 }
