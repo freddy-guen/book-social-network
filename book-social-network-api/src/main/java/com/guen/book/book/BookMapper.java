@@ -1,5 +1,6 @@
 package com.guen.book.book;
 
+import com.guen.book.file.FileUtils;
 import com.guen.book.history.BookTransactionHistory;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,7 @@ public class BookMapper
                 .archived(book.isArchived())
                 .shareable(book.isShareable())
                 .ownerName(book.getOwner().fullName())
-                // TODO : A implémenter plus tard
-                //.cover()
+                .cover(FileUtils.readFileFromLocation(book.getBookCover()))
                 .build();
     }
 
