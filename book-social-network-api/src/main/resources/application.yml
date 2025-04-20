@@ -3,7 +3,7 @@ spring:
     active: dev
   servlet:
     multipart:
-      max-file-size: 50MB  #Permet de d�finir la taille d'un fichier lors de t�l�chargement
+      max-file-size: 50MB  #Permet de définir la taille d'un fichier lors de téléchargement
 
 springdoc:
   default-produces-media-type: application/json

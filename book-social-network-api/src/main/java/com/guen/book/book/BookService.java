@@ -2,6 +2,7 @@ package com.guen.book.book;
 
 import com.guen.book.common.PageResponse;
 import com.guen.book.exception.OperationNotPermittedException;
+import com.guen.book.file.FileStorageService;
 import com.guen.book.history.BookTransactionHistory;
 import com.guen.book.history.BookTransactionHistoryRepository;
 import com.guen.book.user.User;
@@ -13,11 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +26,7 @@ public class BookService
     private final BookRepository bookRepository;
     private final BookTransactionHistoryRepository bookTransactionHistoryRepository;
     private final BookMapper bookMapper;
+    private final FileStorageService fileStorageService;
 
     public Integer save(BookRequest request, Authentication connectedUser)
     {
@@ -208,7 +209,7 @@ public class BookService
         }
 
         User user = ((User) connectedUser.getPrincipal());
-        if (Objects.equals(book.getOwner().getId(), user.getId())) // l'utilisateur ne peut emprunter un livre lui appartenant
+        if (Objects.equals(book.getOwner().getId(), user.getId())) // l'utilisateur ne peut emprunter/retourner un livre lui appartenant
         {
             throw new OperationNotPermittedException("Vous ne pouvez pas emprunter ou retourner votre propre livre");
         }
@@ -230,7 +231,7 @@ public class BookService
         }
 
         User user = ((User) connectedUser.getPrincipal());
-        if (Objects.equals(book.getOwner().getId(), user.getId())) // l'utilisateur ne peut emprunter un livre lui appartenant
+        if (Objects.equals(book.getOwner().getId(), user.getId()))
         {
             throw new OperationNotPermittedException("Vous ne pouvez pas emprunter ou retourner votre propre livre");
         }
@@ -240,5 +241,17 @@ public class BookService
         bookTransactionHistory.setReturnApproved(true);
 
         return bookTransactionHistoryRepository.save(bookTransactionHistory).getId();
+    }
+
+    public void uploadBookCoverPicture(MultipartFile file, Authentication connectedUser, Integer bookId)
+    {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Aucun livre trouvé avec cet ID:: " + bookId));
+
+        User user = ((User) connectedUser.getPrincipal());
+
+        var bookCover = fileStorageService.saveFile(file, user.getId());
+        book.setBookCover(bookCover);
+        bookRepository.save(book);
     }
 }
