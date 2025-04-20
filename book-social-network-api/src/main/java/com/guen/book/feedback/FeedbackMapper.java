@@ -3,6 +3,8 @@ package com.guen.book.feedback;
 import com.guen.book.book.Book;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class FeedbackMapper
 {
@@ -16,6 +18,15 @@ public class FeedbackMapper
                                 .id(request.bookId())
                                 .build()
                 )
+                .build();
+    }
+
+    public FeedbackResponse toFeedbackResponse(Feedback feedback, Integer userId)
+    {
+        return FeedbackResponse.builder()
+                .note(feedback.getNote())
+                .comment(feedback.getComment())
+                .ownFeedback(Objects.equals(feedback.getCreatedBy(), userId))
                 .build();
     }
 }
