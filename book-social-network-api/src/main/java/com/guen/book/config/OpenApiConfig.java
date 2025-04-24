@@ -17,11 +17,11 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         email = "contact@guenengafo.fr",
                         url = "https://guenengafo.fr"
                 ),
-                description = "Documentation OpenApi pour Spring security",
-                title = "Spécification OpenApi - Guenengafo",
+                description = "Documentation OpenApi pour l'API book-social-network",
+                title = "Spécification OpenApi - book-social-network-api",
                 version = "1.0",
                 license = @License(
-                        name = "Nom de la licence",
+                        name = "Licence book-social-network",
                         url = "https://guenengafo.fr/licences"
                 ),
                 termsOfService = "Conditions d'utilisation"

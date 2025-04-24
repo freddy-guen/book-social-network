@@ -1,6 +1,7 @@
 package com.guen.book.book;
 
 import com.guen.book.common.PageResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -13,12 +14,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("books")
 @RequiredArgsConstructor
-@Tag(name = "Book")
+@Tag(name = "Book", description = "Opérations sur les livres (ajout, emprunt, archivage, etc)")
 public class BookController
 {
     private final BookService bookService;
 
     @PostMapping
+    @Operation(summary = "Créer un nouveau livre")
     public ResponseEntity<Integer> saveBook(
             @Valid @RequestBody BookRequest request,
             Authentication connectedUser)
@@ -27,12 +29,17 @@ public class BookController
     }
 
     @GetMapping("{book-id}")
-    public ResponseEntity<BookResponse> findBookById(@PathVariable("book-id") Integer bookId)
+    @Operation(summary = "Récupérer un livre par son ID")
+    public ResponseEntity<BookResponse> findBookById(
+            @Parameter(description = "ID du livre")
+            @PathVariable("book-id") Integer bookId
+    )
     {
         return ResponseEntity.ok(bookService.findById(bookId));
     }
 
     @GetMapping
+    @Operation(summary = "Lister tous les livres disponibles")
     public ResponseEntity<PageResponse<BookResponse>> findAllBooks(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -42,6 +49,7 @@ public class BookController
     }
 
     @GetMapping("/owner")
+    @Operation(summary = "Lister tous les livres disponibles pour l'utilisateur connecté")
     public ResponseEntity<PageResponse<BookResponse>> findAllBooksByOwner(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -51,6 +59,7 @@ public class BookController
     }
 
     @GetMapping("/borrowed")
+    @Operation(summary = "Récupérer tous les livres empruntés par l'utilisateur connecté")
     public ResponseEntity<PageResponse<BorrowedBookResponse>> findAllBorrowedBooks(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -60,6 +69,7 @@ public class BookController
     }
 
     @GetMapping("/returned")
+    @Operation(summary = "Récupérer tous les livres rendus par l'utilisateur connecté")
     public ResponseEntity<PageResponse<BorrowedBookResponse>> findAllReturnedBooks(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -69,7 +79,9 @@ public class BookController
     }
 
     @PatchMapping("/shareable/{book-id}")
+    @Operation(summary = "Mettre à jour le statut partageable d'un livre")
     public ResponseEntity<Integer> updateShareableStatus(
+            @Parameter(description = "ID du livre")
             @PathVariable("book-id") Integer bookId,
             Authentication connectedUser
     )
@@ -78,7 +90,9 @@ public class BookController
     }
 
     @PatchMapping("/archived/{book-id}")
+    @Operation(summary = "Archiver un livre")
     public ResponseEntity<Integer> updateArchivedStatus(
+            @Parameter(description = "ID du livre")
             @PathVariable("book-id") Integer bookId,
             Authentication connectedUser
     )
@@ -87,7 +101,9 @@ public class BookController
     }
 
     @PostMapping("/borrow/{book-id}")
+    @Operation(summary = "Emprunter un livre")
     public ResponseEntity<Integer> borrowBook(
+            @Parameter(description = "ID du livre")
             @PathVariable("book-id") Integer bookId,
             Authentication connectedUser
     )
@@ -96,7 +112,9 @@ public class BookController
     }
 
     @PatchMapping("/borrow/return/{book-id}")
+    @Operation(summary = "Rendre un livre")
     public ResponseEntity<Integer> returnBorrowedBook(
+            @Parameter(description = "ID du livre")
             @PathVariable("book-id") Integer bookId,
             Authentication connectedUser
     )
@@ -105,7 +123,9 @@ public class BookController
     }
 
     @PatchMapping("/borrow/return/approve/{book-id}")
+    @Operation(summary = "Approuver un livre rendu")
     public ResponseEntity<Integer> approveReturnBorrowedBook(
+            @Parameter(description = "ID du livre")
             @PathVariable("book-id") Integer bookId,
             Authentication connectedUser
     )
@@ -114,7 +134,9 @@ public class BookController
     }
 
     @PostMapping(value = "/cover/{book-id}", consumes = "multipart/form-data")
+    @Operation(summary = "Ajouter la couverture d'un livre")
     public ResponseEntity<?> uploadBookCoverPicture(
+            @Parameter(description = "ID du livre")
             @PathVariable("book-id") Integer bookId,
             @Parameter()
             @RequestPart("file") MultipartFile file,
