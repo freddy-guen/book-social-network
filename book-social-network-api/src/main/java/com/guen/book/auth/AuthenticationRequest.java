@@ -15,7 +15,7 @@ public class AuthenticationRequest
 {
     @Email(message = "Format d'email invalide")
     @NotEmpty(message = "L'email est obligatoire")
-    @NotBlank(message = "L'email' est obligatoire")
+    @NotBlank(message = "L'email est obligatoire")
     private String email;
 
     @NotEmpty(message = "Le mot de passe est obligatoire")
