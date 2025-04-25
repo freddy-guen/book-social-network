@@ -1,0 +1,40 @@
+<div class="container-fluid car login-container">
+  <h3>Création de compte</h3>
+  <hr>
+
+  <div class="alert alert-danger" role="alert" *ngIf="errorMessage.length">
+    <p *ngFor="let message of errorMessage">{{ message }}</p>
+  </div>
+
+  <div class="mb-3">
+    <label for="firstname" class="form-label" >Firstname</label>
+    <input [(ngModel)]="registerRequest.firstname" type="text" class="form-control" id="firstname">
+  </div>
+  <div class="mb-3">
+    <label for="lastname" class="form-label" >Lastname</label>
+    <input [(ngModel)]="registerRequest.lastname" type="text" class="form-control" id="lastname">
+  </div>
+
+  <div class="mb-3">
+    <label for="email" class="form-label" >Email</label>
+    <input [(ngModel)]="registerRequest.email" type="email" class="form-control" id="email" placeholder="name@example.com">
+  </div>
+  <div class="mb-3">
+    <label for="password" class="form-label">Mot de passe</label>
+    <input [(ngModel)]="registerRequest.password" type="password" class="form-control" id="password">
+  </div>
+
+  <div class="d-flex justify-content-between mb-3">
+    <button type="button" class="btn btn-primary" (click)="register()">
+      <em class="fas fa-sign-in-alt">&nbsp;S'inscrire</em>
+    </button>
+
+    <!-- Option pour basculer à la page de connexion dépuis l'écran d'inscription -->
+    <div>
+      Vous avez déjà un compte ?&nbsp;
+      <button type="button" class="btn btn-link" (click)="login()">
+        Connectez-vous ici
+      </button>
+    </div>
+  </div>
+</div>
