@@ -1,0 +1,15 @@
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.activate-success, .activate-error {
+  text-align: center;
+}
+
+.activate-error {
+  color: red;
+}
