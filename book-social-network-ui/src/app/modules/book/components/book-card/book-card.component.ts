@@ -32,7 +32,7 @@ export class BookCardComponent {
     if (this._book.cover)
     {
       // On retourne l'image trouvée (data:image/jpg;base64, pour permettre la conversion de string en image jpg)
-      return 'data:image/jpg;base64, ' + this._book.cover;
+      return 'data:image/jpeg;base64, ' + this._book.cover;
     }
     // Si pas d'image de couverture du livre, on retourne une image aléatoire récupérée depuis ce site
     // Idée plus tard : ajouter une image par défaut à tous les livres qui n'ont pas d'image de couverture

@@ -94,7 +94,6 @@ export class BookListComponent implements OnInit{
         this.message = 'Le livre a été ajouté à votre liste';
       },
       error: (err) => {
-        console.log(err);
         this.level = 'error';
         this.message = err.error.error;
       }

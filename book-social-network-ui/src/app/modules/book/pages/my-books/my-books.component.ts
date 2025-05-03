@@ -11,7 +11,6 @@ import {BookResponse} from '../../../../services/models/book-response';
   imports: [
     BookCardComponent,
     NgForOf,
-    NgIf,
     RouterLink
   ],
   templateUrl: './my-books.component.html',
@@ -93,6 +92,6 @@ export class MyBooksComponent implements OnInit {
 
   editBook(book: BookResponse)
   {
-
+    this.router.navigate(['books', 'manage', book.id]);
   }
 }
