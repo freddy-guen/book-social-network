@@ -24,7 +24,9 @@ export class MenuComponent implements OnInit {
     })
   }
 
-  logout() {
-
+  logout()
+  {
+    localStorage.removeItem('token'); //ou localStorage.clear();
+    window.location.reload();
   }
 }
